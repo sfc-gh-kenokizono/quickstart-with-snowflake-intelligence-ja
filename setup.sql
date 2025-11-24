@@ -31,7 +31,6 @@ create or replace file format si_csvformat
   field_optionally_enclosed_by = '"'  
   type = 'csv';  
   
-
 -- Git連携のため、API統合を作成する
 CREATE OR REPLACE API INTEGRATION GIT_API_INTEGRATION
   API_PROVIDER = git_https_api
@@ -246,28 +245,4 @@ METRICS (
         COMMENT = '総メンション数'
 )
 COMMENT = 'セールスとマーケティングデータのセマンティックビュー';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
