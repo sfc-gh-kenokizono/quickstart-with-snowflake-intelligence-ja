@@ -1,47 +1,4 @@
-
-
-
--- Summary of objects created in this script:
---
--- Roles:
---   - snowflake_intelligence_admin
---
--- Warehouses:
---   - dash_wh_si
---
--- Databases:
---   - dash_db_si
---   - snowflake_intelligence
---
--- Schemas:
---   - dash_db_si.retail
---   - snowflake_intelligence.agents
---
--- File Format:
---   - swt_csvformat
---
--- Stages:
---   - swt_marketing_data_stage
---   - swt_products_data_stage
---   - swt_sales_data_stage
---   - swt_social_media_data_stage
---   - swt_support_data_stage
---   - semantic_models
---
--- Tables:
---   - marketing_campaign_metrics
---   - products
---   - sales
---   - social_media
---   - support_cases
---
--- Notification Integration:
---   - email_integration
---
--- Stored Procedure:
---   - send_email
-
-
+-- データベースやウェアハウス、ロールの作成など
 use role accountadmin;
 
 create or replace role snowflake_intelligence_admin;
@@ -99,7 +56,7 @@ file_format = si_csvformat;
 COPY FILES INTO @dash_db_si.retail.FILE
 FROM @GIT_INTEGRATION_FOR_HANDSON/branches/main/data/ PATTERN ='.*\\.csv$';
 
-
+-- テーブル作成とデータロードを5つ分実施
 create or replace table marketing_campaign_metrics (
   date date,
   category varchar(16777216),
@@ -108,11 +65,8 @@ create or replace table marketing_campaign_metrics (
   clicks number(38,0)
 );
 
-
 copy into marketing_campaign_metrics  
-  from @dash_db_si.retail.FILE.marketing_campaign_metrics.csv;
-
-
+  from @dash_db_si.retail.FILE/marketing_campaign_metrics.csv;
   
 create or replace table products (
   product_id number(38,0),
@@ -121,13 +75,8 @@ create or replace table products (
 );
 
 copy into products  
-  from @swt_products_data_stage;
+  from @dash_db_si.retail.FILE/products.csv;
 
--- create table sales and load data from s3 bucket
-create or replace stage swt_sales_data_stage  
-  file_format = swt_csvformat  
-  url = 's3://sfquickstarts/sfguide_getting_started_with_snowflake_intelligence/sales/';  
-  
 create or replace table sales (
   date date,
   region varchar(16777216),
@@ -137,13 +86,9 @@ create or replace table sales (
 );
 
 copy into sales  
-  from @swt_sales_data_stage;
+  from @dash_db_si.retail.FILE/sales.csv;
 
--- create table social_media and load data from s3 bucket
-create or replace stage swt_social_media_data_stage  
-  file_format = swt_csvformat  
-  url = 's3://sfquickstarts/sfguide_getting_started_with_snowflake_intelligence/social_media/';  
-  
+
 create or replace table social_media (
   date date,
   category varchar(16777216),
@@ -153,12 +98,8 @@ create or replace table social_media (
 );
 
 copy into social_media  
-  from @swt_social_media_data_stage;
+  from @dash_db_si.retail.FILE/social_media_mentions.csv;
 
--- create table support_cases and load data from s3 bucket
-create or replace stage swt_support_data_stage  
-  file_format = swt_csvformat  
-  url = 's3://sfquickstarts/sfguide_getting_started_with_snowflake_intelligence/support/';  
   
 create or replace table support_cases (
   id varchar(16777216),
@@ -169,25 +110,19 @@ create or replace table support_cases (
 );
 
 copy into support_cases  
-  from @swt_support_data_stage;
-
-create or replace stage semantic_models encryption = (type = 'snowflake_sse') directory = ( enable = true );
-
-create or replace notification integration email_integration
-  type=email
-  enabled=true
-  default_subject = 'snowflake intelligence';
+  from @dash_db_si.retail.FILE/support_case_ja.csv;
 
 
-
+-- クロスリージョン設定
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
 
 select 'Congratulations! Snowflake Intelligence setup has completed successfully!' as status;
 
 
---------------------------------
+-------------------------------
 
 
+-- セマンティックビュー作成
 CREATE OR REPLACE SEMANTIC VIEW DASH_DB_SI.RETAIL.Sales_And_Marketing_SV
 TABLES (
     MARKETING_CAMPAIGN_METRICS AS DASH_DB_SI.RETAIL.MARKETING_CAMPAIGN_METRICS
@@ -311,11 +246,6 @@ METRICS (
         COMMENT = '総メンション数'
 )
 COMMENT = 'セールスとマーケティングデータのセマンティックビュー';
-
-
-
-
-
 
 
 
