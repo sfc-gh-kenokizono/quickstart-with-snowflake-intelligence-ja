@@ -1,28 +1,28 @@
-<サービスデータベースとスキーマ>
-    DASH_DB_SI.RETAIL
+【サービスデータベースとスキーマ】
+DASH_DB_SI.RETAIL
 
-<サービス名>
-    Support_Cases
+【サービス名】
+Support_Cases
 
-<インデックスを作成するデータを選択>
-    DASH_DB_SI.RETAIL.SUPPORT_CASES
+【インデックスを作成するデータを選択】
+DASH_DB_SI.RETAIL.SUPPORT_CASES
 
-<検索列>
-    TRANSCRIPT
+【検索列】
+TRANSCRIPT
 
-<属性列>
-    TITLE
-    PRODUCT
-    DATE
+【属性列】
+TITLE
+PRODUCT
+DATE
 
-<サービスに含む列を選択>
-    Select all
+【サービスに含む列を選択】
+Select all
 
-<ターゲットラグ>
-    1 時間
+【ターゲットラグ】
+1 時間
 
-<埋め込みモデル>
-    snowflake-arctic-embed-l-v2.0
+【埋め込みモデル】
+snowflake-arctic-embed-l-v2.0
 
-<インデックス作成用のウェアハウス>
-    DASH_WH_SI
+【インデックス作成用のウェアハウス】
+DASH_WH_SI

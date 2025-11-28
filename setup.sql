@@ -5,6 +5,8 @@ create or replace role snowflake_intelligence_admin;
 grant create warehouse on account to role snowflake_intelligence_admin;
 grant create database on account to role snowflake_intelligence_admin;
 grant create integration on account to role snowflake_intelligence_admin;
+grant create snowflake intelligence on account to role snowflake_intelligence_admin;
+
 
 set current_user = (select current_user());   
 grant role snowflake_intelligence_admin to user identifier($current_user);
@@ -115,6 +117,13 @@ copy into support_cases
 -- クロスリージョン設定
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
 
+
+-- Snowflake Intelligenceオブジェクトの作成
+CREATE OR REPLACE SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
+GRANT USAGE ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO ROLE snowflake_intelligence_admin;
+GRANT MODIFY ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO ROLE snowflake_intelligence_admin;
+
+
 select 'Congratulations! Snowflake Intelligence setup has completed successfully!' as status;
 
 
@@ -126,20 +135,20 @@ CREATE OR REPLACE SEMANTIC VIEW DASH_DB_SI.RETAIL.Sales_And_Marketing_SV
 TABLES (
     MARKETING_CAMPAIGN_METRICS AS DASH_DB_SI.RETAIL.MARKETING_CAMPAIGN_METRICS
         PRIMARY KEY (CATEGORY)
-        WITH SYNONYMS ('marketing campaigns', 'ad campaigns')
+        WITH SYNONYMS ('マーケティングキャンペーン', '広告キャンペーン', '宣伝活動', 'キャンペーン')
         COMMENT = 'マーケティングキャンペーンのメトリクス',
     
     PRODUCTS AS DASH_DB_SI.RETAIL.PRODUCTS
         PRIMARY KEY (PRODUCT_ID)
-        WITH SYNONYMS ('product catalog', 'items')
+        WITH SYNONYMS ('商品カタログ', '製品一覧', '商品', '製品', 'アイテム')
         COMMENT = '製品マスタデータ',
     
     SALES AS DASH_DB_SI.RETAIL.SALES
-        WITH SYNONYMS ('transactions', 'orders')
+        WITH SYNONYMS ('売上取引', '販売', '取引', '注文', 'オーダー', '売上データ')
         COMMENT = '売上取引データ',
     
     SOCIAL_MEDIA AS DASH_DB_SI.RETAIL.SOCIAL_MEDIA
-        WITH SYNONYMS ('social media metrics', 'social data')
+        WITH SYNONYMS ('ソーシャルメディア', 'SNS', 'ソーシャル', 'SNSデータ', 'ソーシャル指標')
         COMMENT = 'ソーシャルメディアデータ'
 )
 RELATIONSHIPS (
@@ -164,85 +173,84 @@ FACTS (
 )
 DIMENSIONS (
     MARKETING_CAMPAIGN_METRICS.campaign_name AS MARKETING_CAMPAIGN_METRICS.CAMPAIGN_NAME
-        WITH SYNONYMS ('ad_campaign', 'ad_title', 'advertisement_name', 'campaign_title', 'marketing_campaign', 'promo_name', 'promotion_name')
+        WITH SYNONYMS ('キャンペーン名', '広告名', '宣伝名', 'プロモーション名', 'キャンペーンタイトル', '広告タイトル')
         COMMENT = 'マーケティングキャンペーンの名前',
     
     MARKETING_CAMPAIGN_METRICS.marketing_category AS MARKETING_CAMPAIGN_METRICS.CATEGORY
-        WITH SYNONYMS ('class', 'classification', 'genre', 'group', 'kind', 'label', 'sort', 'type')
+        WITH SYNONYMS ('カテゴリ', '分類', '区分', 'ジャンル', '種類', 'タイプ', '分野')
         COMMENT = 'マーケティングキャンペーンのカテゴリ',
     
     MARKETING_CAMPAIGN_METRICS.marketing_date AS MARKETING_CAMPAIGN_METRICS.DATE
-        WITH SYNONYMS ('calendar_date', 'calendar_day', 'datestamp', 'day', 'schedule_date', 'timestamp')
+        WITH SYNONYMS ('日付', '日時', '年月日', 'キャンペーン日', '実施日', '配信日')
         COMMENT = 'マーケティングキャンペーンの指標が記録された日付',
     
     PRODUCTS.product_category AS PRODUCTS.CATEGORY
-        WITH SYNONYMS ('product_class', 'product_classification', 'product_genre', 'product_group', 'product_type')
+        WITH SYNONYMS ('商品カテゴリ', '製品カテゴリ', '商品分類', '製品分類', '商品種別', 'ジャンル')
         COMMENT = '販売される製品のタイプ',
     
     PRODUCTS.product_id AS PRODUCTS.PRODUCT_ID
-        WITH SYNONYMS ('item_id', 'item_number', 'product_code', 'sku')
+        WITH SYNONYMS ('商品ID', '製品ID', 'アイテムID', '商品コード', '製品コード', 'SKU', 'JAN')
         COMMENT = 'カタログ内の各製品の一意識別子',
     
     PRODUCTS.product_name AS PRODUCTS.PRODUCT_NAME
-        WITH SYNONYMS ('item_description', 'item_name', 'product_label', 'product_title')
+        WITH SYNONYMS ('商品名', '製品名', 'アイテム名', '商品タイトル', '製品タイトル', '商品説明')
         COMMENT = '販売される製品の名前',
     
     SALES.sales_product_id AS SALES.PRODUCT_ID
-        WITH SYNONYMS ('item_id', 'product_code', 'sku')
+        WITH SYNONYMS ('売上商品ID', '販売商品ID', '商品ID', '製品ID', 'SKU')
         COMMENT = '販売された製品の一意識別子',
     
     SALES.region AS SALES.REGION
-        WITH SYNONYMS ('area', 'district', 'geographic_area', 'location', 'territory', 'zone')
+        WITH SYNONYMS ('地域', 'エリア', '地区', '営業区域', '販売地域', '市場', '拠点')
         COMMENT = '売上が作られた地理的地域',
     
     SALES.sales_date AS SALES.DATE
-        WITH SYNONYMS ('calendar_date', 'day', 'date_column', 'timestamp')
+        WITH SYNONYMS ('売上日', '販売日', '取引日', '注文日', '日付', '年月日')
         COMMENT = '売上日。取引が発生したカレンダー日付',
     
     SOCIAL_MEDIA.social_category AS SOCIAL_MEDIA.CATEGORY
-        WITH SYNONYMS ('class', 'classification', 'type')
+        WITH SYNONYMS ('SNSカテゴリ', 'ソーシャルカテゴリ', '分類', 'ジャンル', '種別')
         COMMENT = 'ソーシャルメディアコンテンツのカテゴリ',
     
     SOCIAL_MEDIA.influencer AS SOCIAL_MEDIA.INFLUENCER
-        WITH SYNONYMS ('brand_ambassador', 'content_creator', 'social_media_personality')
+        WITH SYNONYMS ('インフルエンサー', 'インフルエンサー名', 'クリエイター', 'コンテンツクリエイター', 'ブランドアンバサダー')
         COMMENT = 'ソーシャルメディアインフルエンサーの名前',
     
     SOCIAL_MEDIA.platform AS SOCIAL_MEDIA.PLATFORM
-        WITH SYNONYMS ('channel', 'network', 'social_media_channel')
+        WITH SYNONYMS ('プラットフォーム', 'SNSプラットフォーム', 'メディア', 'チャネル', 'ネットワーク')
         COMMENT = 'ソーシャルメディアプラットフォーム',
     
     SOCIAL_MEDIA.social_date AS SOCIAL_MEDIA.DATE
-        WITH SYNONYMS ('calendar_date', 'posting_date', 'timestamp')
+        WITH SYNONYMS ('SNS日付', 'ソーシャル日付', '投稿日', '配信日', '日付', '年月日')
         COMMENT = 'ソーシャルメディアデータが収集された日付'
 )
 METRICS (
     MARKETING_CAMPAIGN_METRICS.total_clicks AS SUM(CLICKS)
-        WITH SYNONYMS ('total clicks', 'click count')
+        WITH SYNONYMS ('総クリック数', 'クリック合計', 'クリック数', 'トータルクリック', 'クリック総数')
         COMMENT = '総クリック数',
     
     MARKETING_CAMPAIGN_METRICS.total_impressions AS SUM(IMPRESSIONS)
-        WITH SYNONYMS ('total impressions', 'impression count')
+        WITH SYNONYMS ('総インプレッション数', 'インプレッション合計', 'インプレッション数', '表示回数', '総表示回数')
         COMMENT = '総インプレッション数',
     
     MARKETING_CAMPAIGN_METRICS.click_through_rate AS DIV0(SUM(CLICKS), SUM(IMPRESSIONS))
-        WITH SYNONYMS ('CTR', 'click rate')
+        WITH SYNONYMS ('クリック率', 'CTR', 'クリックスルー率', 'クリック通過率')
         COMMENT = 'クリック率（CTR）',
     
     SALES.total_sales_amount AS SUM(SALES_AMOUNT)
-        WITH SYNONYMS ('total sales', 'revenue')
+        WITH SYNONYMS ('総売上金額', '売上合計', '総売上', '売上総額', '売上高', '総収益', '収益合計')
         COMMENT = '総売上金額',
     
     SALES.total_units_sold AS SUM(UNITS_SOLD)
-        WITH SYNONYMS ('total units', 'quantity sold')
+        WITH SYNONYMS ('総販売数量', '販売数量合計', '総販売個数', '販売合計数', '売上数量', '販売総数')
         COMMENT = '総販売数量',
     
     SALES.average_sales_amount AS AVG(SALES_AMOUNT)
-        WITH SYNONYMS ('avg sales', 'average revenue')
+        WITH SYNONYMS ('平均売上金額', '売上平均', '平均売上', '平均収益', '売上単価', '平均単価')
         COMMENT = '平均売上金額',
     
     SOCIAL_MEDIA.total_mentions AS SUM(MENTIONS)
-        WITH SYNONYMS ('total mentions', 'mention count')
+        WITH SYNONYMS ('総メンション数', 'メンション合計', 'メンション数', '言及回数', '言及総数', 'バズ数')
         COMMENT = '総メンション数'
 )
 COMMENT = 'セールスとマーケティングデータのセマンティックビュー';
-
