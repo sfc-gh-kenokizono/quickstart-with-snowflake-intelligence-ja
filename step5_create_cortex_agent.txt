@@ -59,7 +59,7 @@ DASH_DB_SI.RETAILスキーマの売上・マーケティングデータモデル
 DASH_DB_SI.RETAIL
 
 【プルダウン】
-DASH_DB_SI.RETAIL.SUPPORT_CASES
+Support_Cases
 
 【ID列】
 ID
