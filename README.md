@@ -1,4 +1,4 @@
-# QucikStart with Snowflake Intelligence - JA
+# QuickStart with Snowflake Intelligence - JA
 
 ## 概要
 

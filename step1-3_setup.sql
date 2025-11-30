@@ -1,4 +1,10 @@
--- データベースやウェアハウス、ロールの作成など
+-- ============================================
+-- Step 1: 環境のセットアップ
+-- ============================================
+-- ロール、データベース、ウェアハウスを作成し、
+-- サンプルデータをロードします。
+-- ============================================
+
 use role accountadmin;
 
 create or replace role snowflake_intelligence_admin;
@@ -118,19 +124,14 @@ copy into support_cases
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
 
 
--- Snowflake Intelligenceオブジェクトの作成
-CREATE OR REPLACE SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
-GRANT USAGE ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO ROLE snowflake_intelligence_admin;
-GRANT MODIFY ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO ROLE snowflake_intelligence_admin;
+-- ============================================
+-- Step 2: セマンティックビューの作成
+-- ============================================
+-- 日本語シノニムを含むセマンティックビューを作成します。
+-- テーブル間のリレーションシップ、メトリクス、
+-- ディメンションを定義します。
+-- ============================================
 
-
-select 'Congratulations! Snowflake Intelligence setup has completed successfully!' as status;
-
-
--------------------------------
-
-
--- セマンティックビュー作成
 CREATE OR REPLACE SEMANTIC VIEW DASH_DB_SI.RETAIL.Sales_And_Marketing_SV
 TABLES (
     MARKETING_CAMPAIGN_METRICS AS DASH_DB_SI.RETAIL.MARKETING_CAMPAIGN_METRICS
@@ -254,3 +255,21 @@ METRICS (
         COMMENT = '総メンション数'
 )
 COMMENT = 'セールスとマーケティングデータのセマンティックビュー';
+
+
+-- ============================================
+-- Step 3: Snowflake Intelligence オブジェクトの作成
+-- ============================================
+-- Snowflake Intelligence オブジェクトを作成し、
+-- 必要な権限を付与します。
+-- ============================================
+
+CREATE OR REPLACE SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
+GRANT USAGE ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO ROLE snowflake_intelligence_admin;
+GRANT MODIFY ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO ROLE snowflake_intelligence_admin;
+
+
+-- ============================================
+-- セットアップ完了
+-- ============================================
+select 'Congratulations! Step 1-3 setup has completed successfully!' as status;
