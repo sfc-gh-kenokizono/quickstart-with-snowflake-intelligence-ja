@@ -1,4 +1,4 @@
-# Qucic Start with Snowflake Intelligence - JA
+# QucikStart with Snowflake Intelligence - JA
 
 ## 概要
 
