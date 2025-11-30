@@ -66,7 +66,7 @@ SUPPORT_CASES
 グラフを使用して視覚的に回答できる場合は、ユーザーが指定していなくても常にグラフを生成してください。
 
 【Response instructions】
-別ファイル「Response instructions.txt」の内容を貼り付けてください。
+別ファイル「step5_ref_response_instructions.txt」の内容を貼り付けてください。
 
 【Time Limit (seconds)】
 No limit

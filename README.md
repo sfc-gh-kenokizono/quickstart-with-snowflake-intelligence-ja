@@ -26,24 +26,24 @@
 
 ```
 .
-├── setup.sql                    # セットアップスクリプト（全ステップ含む）
-├── Create Cortex Search.txt     # Cortex Search サービス作成手順
-├── Create Cortex Agent.txt      # Cortex Agent 作成手順
-├── Response instructions.txt    # エージェントのレスポンス指示
+├── step1-3_setup.sql                    # Step1-3: 環境・データ・セマンティックビューのセットアップ
+├── step4_create_cortex_search.txt       # Step4: Cortex Search サービス作成手順
+├── step5_create_cortex_agent.txt        # Step5: Cortex Agent 作成手順
+├── step5_ref_response_instructions.txt  # Step5で使用: エージェントのレスポンス指示
 └── data/
     ├── marketing_campaign_metrics.csv
     ├── products.csv
     ├── sales.csv
     ├── social_media_mentions.csv
-    ├── support_case_ja.csv      # 日本語版サポートケース
-    └── support_cases.csv        # 英語版サポートケース
+    ├── support_case_ja.csv              # 日本語版サポートケース
+    └── support_cases.csv                # 英語版サポートケース
 ```
 
 ## セットアップ手順
 
 ### Step 1: 環境のセットアップ
 
-`setup.sql` を Snowsight で実行し、以下のリソースを作成します：
+`step1-3_setup.sql` を Snowsight で実行し、以下のリソースを作成します：
 
 - **ロール**: `SNOWFLAKE_INTELLIGENCE_ADMIN`
 - **データベース**: `DASH_DB_SI`
@@ -58,7 +58,7 @@
 
 ### Step 2: セマンティックビューの作成
 
-`setup.sql` の後半部分で、日本語シノニムを含むセマンティックビュー `Sales_And_Marketing_SV` が作成されます。
+`step1-3_setup.sql` の後半部分で、日本語シノニムを含むセマンティックビュー `Sales_And_Marketing_SV` が作成されます。
 
 **主な特徴**:
 - テーブル間のリレーションシップ定義
@@ -67,12 +67,12 @@
 
 ### Step 3: Snowflake Intelligence オブジェクトの作成
 
-`setup.sql` で `SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT` が自動作成されます。
+`step1-3_setup.sql` で `SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT` が自動作成されます。
 
 ### Step 4: Cortex Search サービスの作成
 
 Snowsight の **Data > Cortex Search** から新しいサービスを作成します。  
-詳細は `Create Cortex Search.txt` を参照してください。
+詳細は `step4_create_cortex_search.txt` を参照してください。
 
 | 設定項目 | 値 |
 |----------|-----|
@@ -85,12 +85,12 @@ Snowsight の **Data > Cortex Search** から新しいサービスを作成し�
 ### Step 5: Cortex Agent の作成
 
 Snowsight の **AI/ML > Agents** から新しいエージェントを作成します。  
-詳細は `Create Cortex Agent.txt` を参照してください。
+詳細は `step5_create_cortex_agent.txt` を参照してください。
 
 **エージェント構成**:
 - **ツール①**: Cortex Analyst（セマンティックビュー `Sales_And_Marketing_SV`）
 - **ツール②**: Cortex Search（`SUPPORT_CASES` サービス）
-- **Response Instructions**: `Response instructions.txt` の内容を設定
+- **Response Instructions**: `step5_ref_response_instructions.txt` の内容を設定
 
 ## サンプル質問
 
