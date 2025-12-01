@@ -145,9 +145,9 @@ Snowsight の **AI/ML > Agents** から新しいエージェントを作成し�
 ## 参考リンク
 
 - [元のクイックスタート（英語）](https://quickstarts.snowflake.com/guide/getting-started-with-snowflake-intelligence/index.html)
-- [Snowflake Intelligence ドキュメント](https://docs.snowflake.com/en/user-guide/snowflake-intelligence/overview)
-- [セマンティックビュー ドキュメント](https://docs.snowflake.com/en/user-guide/views-semantic)
-- [Cortex Search ドキュメント](https://docs.snowflake.com/en/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
+- [Snowflake Intelligence ドキュメント](https://docs.snowflake.com/ja/user-guide/snowflake-cortex/snowflake-intelligence)
+- [セマンティックビュー ドキュメント](https://docs.snowflake.com/ja/user-guide/views-semantic/overview)
+- [Cortex Search ドキュメント](https://docs.snowflake.com/ja/user-guide/snowflake-cortex/cortex-search/cortex-search-overview)
 
 ## ライセンス
 
