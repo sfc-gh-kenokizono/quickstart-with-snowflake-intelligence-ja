@@ -76,7 +76,6 @@ create or replace table marketing_campaign_metrics (
   impressions number(38,0),
   clicks number(38,0)
 );
-
 copy into marketing_campaign_metrics  
   from @dash_db_si.retail.FILE/marketing_campaign_metrics.csv;
 
@@ -87,7 +86,6 @@ create or replace table products (
   product_name varchar(16777216),
   category varchar(16777216)
 );
-
 copy into products  
   from @dash_db_si.retail.FILE/products.csv;
 
@@ -100,7 +98,6 @@ create or replace table sales (
   units_sold number(38,0),
   sales_amount number(38,2)
 );
-
 copy into sales  
   from @dash_db_si.retail.FILE/sales.csv;
 
@@ -113,7 +110,6 @@ create or replace table social_media (
   influencer varchar(16777216),
   mentions number(38,0)
 );
-
 copy into social_media  
   from @dash_db_si.retail.FILE/social_media_mentions.csv;
 
@@ -127,10 +123,8 @@ create or replace table support_cases (
   transcript varchar(16777216),
   date date
 );
-
 copy into support_cases  
   from @dash_db_si.retail.FILE/support_case_ja.csv;
-
 
 -- クロスリージョン設定
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
