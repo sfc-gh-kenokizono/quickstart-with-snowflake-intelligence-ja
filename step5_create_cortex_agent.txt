@@ -80,7 +80,10 @@ DASH_DB_SI.RETAILスキーマの売上・マーケティングデータモデル
 DASH_DB_SI.RETAIL
 
 【プルダウン】
-Support_Cases
+DASH_DB_SI.RETAIL.Support_Cases
+
+【Max results】
+4（そのままでOK）
 
 【ID列】
 ID
@@ -94,9 +97,14 @@ SUPPORT_CASES
 【説明】
 お客様とのチャットスクリプトの非構造化データから、顧客の声分析を実行します。
 
+→ 追加
+
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 オーケストレーション
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+【Model】
+Claude Sonnet 4.5
 
 【Orchestration instructions】
 グラフを使用して視覚的に回答できる場合は、ユーザーが指定していなくても常にグラフを生成してください。
@@ -116,3 +124,5 @@ No limit
 
 【ロール】
 SNOWFLAKE_INTELLIGENCE_ADMIN
+
+→ 保存
