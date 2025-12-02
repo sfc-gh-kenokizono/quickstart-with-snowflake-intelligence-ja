@@ -27,9 +27,9 @@
 ```
 .
 ├── step1-3_setup.sql                    # Step1-3: 環境・データ・セマンティックビューのセットアップ
-├── step4_create_cortex_search.txt       # Step4: Cortex Search サービス作成手順
-├── step5_create_cortex_agent.txt        # Step5: Cortex Agent 作成手順
-├── step5_ref_response_instructions.txt  # Step5で使用: エージェントのレスポンス指示
+├── step4_create_cortex_search.md        # Step4: Cortex Search サービス作成手順
+├── step5_create_cortex_agent.md         # Step5: Cortex Agent 作成手順
+├── step5_ref_response_instructions.md   # Step5で使用: エージェントのレスポンス指示
 └── data/
     ├── marketing_campaign_metrics.csv
     ├── products.csv
@@ -71,7 +71,7 @@
 ### Step 4: Cortex検索サービスの作成
 
 Snowsight の **AIとML > Cortex検索** から新しいサービスを作成します。  
-詳細は `step4_create_cortex_search.txt` を参照してください。
+詳細は `step4_create_cortex_search.md` を参照してください。
 
 | 設定項目 | 値 |
 |----------|-----|
@@ -84,12 +84,12 @@ Snowsight の **AIとML > Cortex検索** から新しいサービスを作成し
 ### Step 5: Cortex エージェントの作成
 
 Snowsight の **AIとML > エージェント** から新しいエージェントを作成します。  
-詳細は `step5_create_cortex_agent.txt` を参照してください。
+詳細は `step5_create_cortex_agent.md` を参照してください。
 
 **エージェント構成**:
 - **ツール①**: Cortex Analyst（セマンティックビュー `Sales_And_Marketing_SV`）
 - **ツール②**: Cortex検索（`SUPPORT_CASES` サービス）
-- **Response Instructions**: `step5_ref_response_instructions.txt` の内容を設定
+- **Response Instructions**: `step5_ref_response_instructions.md` の内容を設定
 
 ## サンプル質問
 
