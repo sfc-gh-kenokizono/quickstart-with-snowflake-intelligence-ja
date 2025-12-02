@@ -63,7 +63,12 @@ file_format = si_csvformat;
 COPY FILES INTO @dash_db_si.retail.FILE
 FROM @GIT_INTEGRATION_FOR_HANDSON/branches/main/data/ PATTERN ='.*\\.csv$';
 
--- テーブル作成とデータロードを5つ分実施
+-- ============================================
+-- テーブル作成とデータロード（5テーブル）
+-- ============================================
+
+-- [1/5] MARKETING_CAMPAIGN_METRICS: マーケティングキャンペーン指標
+-- インプレッション数、クリック数などのキャンペーン効果を記録
 create or replace table marketing_campaign_metrics (
   date date,
   category varchar(16777216),
@@ -74,7 +79,9 @@ create or replace table marketing_campaign_metrics (
 
 copy into marketing_campaign_metrics  
   from @dash_db_si.retail.FILE/marketing_campaign_metrics.csv;
-  
+
+-- [2/5] PRODUCTS: 製品マスタ
+-- 商品ID、商品名、カテゴリの製品情報
 create or replace table products (
   product_id number(38,0),
   product_name varchar(16777216),
@@ -84,6 +91,8 @@ create or replace table products (
 copy into products  
   from @dash_db_si.retail.FILE/products.csv;
 
+-- [3/5] SALES: 売上データ
+-- 日付、地域、商品ごとの販売数量と売上金額
 create or replace table sales (
   date date,
   region varchar(16777216),
@@ -95,7 +104,8 @@ create or replace table sales (
 copy into sales  
   from @dash_db_si.retail.FILE/sales.csv;
 
-
+-- [4/5] SOCIAL_MEDIA: ソーシャルメディア指標
+-- プラットフォーム別、インフルエンサー別のメンション数
 create or replace table social_media (
   date date,
   category varchar(16777216),
@@ -107,7 +117,9 @@ create or replace table social_media (
 copy into social_media  
   from @dash_db_si.retail.FILE/social_media_mentions.csv;
 
-  
+-- [5/5] SUPPORT_CASES: カスタマーサポートケース（日本語）
+-- お客様との会話トランスクリプト（非構造化データ）
+-- → Step4でCortex Searchの検索対象になります
 create or replace table support_cases (
   id varchar(16777216),
   title varchar(16777216),
@@ -133,6 +145,12 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
 -- ============================================
 
 CREATE OR REPLACE SEMANTIC VIEW DASH_DB_SI.RETAIL.Sales_And_Marketing_SV
+
+-- ----------------------------------------
+-- TABLES: 使用するテーブルを定義
+-- セマンティックビューに含めるテーブルと、
+-- 日本語シノニム（別名）を設定します
+-- ----------------------------------------
 TABLES (
     MARKETING_CAMPAIGN_METRICS AS DASH_DB_SI.RETAIL.MARKETING_CAMPAIGN_METRICS
         PRIMARY KEY (CATEGORY)
@@ -152,10 +170,22 @@ TABLES (
         WITH SYNONYMS ('ソーシャルメディア', 'SNS', 'ソーシャル', 'SNSデータ', 'ソーシャル指標')
         COMMENT = 'ソーシャルメディアデータ'
 )
+
+-- ----------------------------------------
+-- RELATIONSHIPS: テーブル間の結合関係を定義
+-- JOINの条件を事前に設定しておくことで、
+-- AIが適切にテーブルを結合できます
+-- ----------------------------------------
 RELATIONSHIPS (
     SALES_TO_PRODUCT AS SALES (PRODUCT_ID) REFERENCES PRODUCTS,
     MARKETING_TO_SOCIAL AS SOCIAL_MEDIA (CATEGORY) REFERENCES MARKETING_CAMPAIGN_METRICS
 )
+
+-- ----------------------------------------
+-- FACTS: 集計対象の数値カラムを定義
+-- SUM, AVG, COUNTなどで集計される
+-- 「測定値」となるカラムを指定します
+-- ----------------------------------------
 FACTS (
     MARKETING_CAMPAIGN_METRICS.clicks AS CLICKS
         COMMENT = 'マーケティングキャンペーンの一環として、ユーザーが広告やプロモーションリンクをクリックした総回数',
@@ -172,6 +202,12 @@ FACTS (
     SOCIAL_MEDIA.mentions AS MENTIONS
         COMMENT = 'ソーシャルメディアプラットフォーム上でブランド、製品、またはキーワードが言及された回数'
 )
+
+-- ----------------------------------------
+-- DIMENSIONS: 分析軸（グループ化キー）を定義
+-- 「〜別」「〜ごと」で分析する際の
+-- 切り口となるカラムを指定します
+-- ----------------------------------------
 DIMENSIONS (
     MARKETING_CAMPAIGN_METRICS.campaign_name AS MARKETING_CAMPAIGN_METRICS.CAMPAIGN_NAME
         WITH SYNONYMS ('キャンペーン名', '広告名', '宣伝名', 'プロモーション名', 'キャンペーンタイトル', '広告タイトル')
@@ -225,6 +261,12 @@ DIMENSIONS (
         WITH SYNONYMS ('SNS日付', 'ソーシャル日付', '投稿日', '配信日', '日付', '年月日')
         COMMENT = 'ソーシャルメディアデータが収集された日付'
 )
+
+-- ----------------------------------------
+-- METRICS: 計算式（集計ロジック）を定義
+-- よく使う集計パターン（合計、平均、率など）を
+-- 事前に定義しておきます
+-- ----------------------------------------
 METRICS (
     MARKETING_CAMPAIGN_METRICS.total_clicks AS SUM(CLICKS)
         WITH SYNONYMS ('総クリック数', 'クリック合計', 'クリック数', 'トータルクリック', 'クリック総数')
@@ -273,3 +315,39 @@ GRANT MODIFY ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO 
 -- セットアップ完了
 -- ============================================
 select 'Congratulations! Step 1-3 setup has completed successfully!' as status;
+
+
+-- ============================================
+-- クリーンアップ（ハンズオン終了後に実行）
+-- ============================================
+-- 注意: 以下のコマンドはハンズオン環境を完全に削除します。
+-- 必要な場合のみ、ACCOUNTADMINロールで実行してください。
+-- ============================================
+
+/*
+
+USE ROLE ACCOUNTADMIN;
+
+-- Step 5で作成したCortex Agent
+DROP AGENT IF EXISTS SNOWFLAKE_INTELLIGENCE.AGENTS.SALES_AI;
+
+-- Step 4で作成したCortex Search サービス
+DROP CORTEX SEARCH SERVICE IF EXISTS DASH_DB_SI.RETAIL.SUPPORT_CASES;
+
+-- Step 3で作成したSnowflake Intelligence オブジェクト
+DROP SNOWFLAKE INTELLIGENCE IF EXISTS SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
+
+-- Step 1で作成したリソース
+DROP DATABASE IF EXISTS DASH_DB_SI;
+DROP DATABASE IF EXISTS SNOWFLAKE_INTELLIGENCE;
+DROP WAREHOUSE IF EXISTS DASH_WH_SI;
+
+-- Git連携
+DROP API INTEGRATION IF EXISTS GIT_API_INTEGRATION;
+
+-- ロールの削除（最後に実行）
+DROP ROLE IF EXISTS SNOWFLAKE_INTELLIGENCE_ADMIN;
+
+SELECT 'Cleanup completed successfully!' AS status;
+
+*/
