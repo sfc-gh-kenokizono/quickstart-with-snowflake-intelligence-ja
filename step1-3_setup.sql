@@ -131,7 +131,19 @@ ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
 
 
 -- ============================================
--- Step 2: セマンティックビューの作成
+-- Step 2: Snowflake Intelligence オブジェクトの作成
+-- ============================================
+-- Snowflake Intelligence オブジェクトを作成し、
+-- 必要な権限を付与します。
+-- ============================================
+
+CREATE OR REPLACE SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
+GRANT USAGE ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO ROLE snowflake_intelligence_admin;
+GRANT MODIFY ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO ROLE snowflake_intelligence_admin;
+
+
+-- ============================================
+-- Step 3: セマンティックビューの作成
 -- ============================================
 -- 日本語シノニムを含むセマンティックビューを作成します。
 -- テーブル間のリレーションシップ、メトリクス、
@@ -294,7 +306,7 @@ COMMENT = 'セールスとマーケティングデータのセマンティック
 
 
 -- ============================================
--- 💡 Step 2 補足: Snowsightでセマンティックビューを確認
+-- 💡 Step 3 補足: Snowsightでセマンティックビューを確認
 -- ============================================
 -- 
 -- 【操作手順】
@@ -310,18 +322,6 @@ COMMENT = 'セールスとマーケティングデータのセマンティック
 -- → 次回から同じ質問に一発で正確な回答を返します
 --
 -- ============================================
-
-
--- ============================================
--- Step 3: Snowflake Intelligence オブジェクトの作成
--- ============================================
--- Snowflake Intelligence オブジェクトを作成し、
--- 必要な権限を付与します。
--- ============================================
-
-CREATE OR REPLACE SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
-GRANT USAGE ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO ROLE snowflake_intelligence_admin;
-GRANT MODIFY ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO ROLE snowflake_intelligence_admin;
 
 
 -- ============================================
@@ -347,11 +347,11 @@ DROP AGENT IF EXISTS SNOWFLAKE_INTELLIGENCE.AGENTS.SALES_AI;
 -- Step 4で作成したCortex Search サービス
 DROP CORTEX SEARCH SERVICE IF EXISTS DASH_DB_SI.RETAIL.SUPPORT_CASES;
 
--- Step 3で作成したSnowflake Intelligence オブジェクト
-DROP SNOWFLAKE INTELLIGENCE IF EXISTS SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
-
--- Step 2で作成したセマンティックビュー
+-- Step 3で作成したセマンティックビュー
 DROP SEMANTIC VIEW IF EXISTS DASH_DB_SI.RETAIL.SALES_AND_MARKETING_SV;
+
+-- Step 2で作成したSnowflake Intelligence オブジェクト
+DROP SNOWFLAKE INTELLIGENCE IF EXISTS SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
 
 -- Step 1で作成したリソース
 DROP DATABASE IF EXISTS DASH_DB_SI;

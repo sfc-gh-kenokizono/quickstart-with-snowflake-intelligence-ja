@@ -56,7 +56,11 @@
   - `SOCIAL_MEDIA` - ソーシャルメディア指標
   - `SUPPORT_CASES` - カスタマーサポートケース（日本語）
 
-### Step 2: セマンティックビューの作成
+### Step 2: Snowflake Intelligence オブジェクトの作成
+
+`step1-3_setup.sql` で `SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT` が自動作成されます。
+
+### Step 3: セマンティックビューの作成
 
 `step1-3_setup.sql` の後半部分で、日本語シノニムを含むセマンティックビュー `Sales_And_Marketing_SV` が作成されます。
 
@@ -64,10 +68,6 @@
 - テーブル間のリレーションシップ定義
 - 日本語シノニム（「売上」「販売」「商品」など）
 - メトリクス定義（総売上、CTR、メンション数など）
-
-### Step 3: Snowflake Intelligence オブジェクトの作成
-
-`step1-3_setup.sql` で `SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT` が自動作成されます。
 
 ### Step 4: Cortex検索サービスの作成
 
