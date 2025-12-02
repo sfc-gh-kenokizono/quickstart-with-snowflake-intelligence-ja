@@ -6,7 +6,9 @@ Step 4: Cortex Search サービスの作成
 セマンティック検索できるようにします。
 
 【UIナビゲーション】
-Snowsight → Data → Cortex Search → + Cortex Search Service
+Snowsight → AIとML → Cortex検索
+ → データベース: DASH_DB_SI、スキーマ: RETAIL を選択
+ → 作成
 
 ============================================
 以下の設定値を入力してください

@@ -304,8 +304,9 @@ COMMENT = 'セールスとマーケティングデータのセマンティック
 -- ============================================
 -- 
 -- 【操作手順】
--- 1. Snowsight → Data → Databases → DASH_DB_SI → RETAIL 
---    → Views → Sales_And_Marketing_SV を選択
+-- 1. Snowsight → AIとML → Cortex分析 
+--    → データベース: DASH_DB_SI、スキーマ: RETAIL
+--    → Sales_And_Marketing_SV を選択
 -- 2. 「Playground」タブで質問を試してみましょう
 --    例: 「製品カテゴリ別の売上を教えて」
 --

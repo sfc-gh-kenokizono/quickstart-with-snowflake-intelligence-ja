@@ -7,7 +7,9 @@ Step 5: Cortex Agent の作成
 AIエージェントを作成します。
 
 【UIナビゲーション】
-Snowsight → AI/ML → Agents → + Agent
+Snowsight → AIとML → エージェント
+ → データベース: DASH_DB_SI、スキーマ: RETAIL を選択
+ → エージェントを作成
 
 ============================================
 以下の設定値を入力してください

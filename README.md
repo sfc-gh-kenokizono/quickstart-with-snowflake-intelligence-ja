@@ -69,9 +69,9 @@
 
 `step1-3_setup.sql` で `SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT` が自動作成されます。
 
-### Step 4: Cortex Search サービスの作成
+### Step 4: Cortex検索サービスの作成
 
-Snowsight の **Data > Cortex Search** から新しいサービスを作成します。  
+Snowsight の **AIとML > Cortex検索** から新しいサービスを作成します。  
 詳細は `step4_create_cortex_search.txt` を参照してください。
 
 | 設定項目 | 値 |
@@ -82,14 +82,14 @@ Snowsight の **Data > Cortex Search** から新しいサービスを作成し�
 | 属性列 | `TITLE`, `PRODUCT`, `DATE` |
 | 埋め込みモデル | `snowflake-arctic-embed-l-v2.0` |
 
-### Step 5: Cortex Agent の作成
+### Step 5: Cortex エージェントの作成
 
-Snowsight の **AI/ML > Agents** から新しいエージェントを作成します。  
+Snowsight の **AIとML > エージェント** から新しいエージェントを作成します。  
 詳細は `step5_create_cortex_agent.txt` を参照してください。
 
 **エージェント構成**:
 - **ツール①**: Cortex Analyst（セマンティックビュー `Sales_And_Marketing_SV`）
-- **ツール②**: Cortex Search（`SUPPORT_CASES` サービス）
+- **ツール②**: Cortex検索（`SUPPORT_CASES` サービス）
 - **Response Instructions**: `step5_ref_response_instructions.txt` の内容を設定
 
 ## サンプル質問
