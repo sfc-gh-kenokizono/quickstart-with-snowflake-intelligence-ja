@@ -7,8 +7,8 @@ Step 5: Cortex Agent の作成
 AIエージェントを作成します。
 
 【UIナビゲーション】
-Snowsight → AIとML → エージェント
- → エージェントを作成
+Snowsight → AIとML → エージェント → Snowflake Intelligence（タブ）
+ → Create agent
 
 ============================================
 以下の設定値を入力してください
