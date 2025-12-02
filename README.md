@@ -35,8 +35,7 @@
     ├── products.csv
     ├── sales.csv
     ├── social_media_mentions.csv
-    ├── support_case_ja.csv              # 日本語版サポートケース
-    └── support_cases.csv                # 英語版サポートケース
+    └── support_case_ja.csv              # 日本語版サポートケース
 ```
 
 ## セットアップ手順
