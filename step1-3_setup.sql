@@ -24,11 +24,6 @@ create or replace database dash_db_si;
 create or replace schema retail;
 create or replace warehouse dash_wh_si with warehouse_size='large';
 
-create database if not exists snowflake_intelligence;
-create schema if not exists snowflake_intelligence.agents;
-
-grant create agent on schema snowflake_intelligence.agents to role snowflake_intelligence_admin;
-
 use database dash_db_si;
 use schema retail;
 use warehouse dash_wh_si;
@@ -342,7 +337,7 @@ select 'Congratulations! Step 1-3 setup has completed successfully!' as status;
 USE ROLE ACCOUNTADMIN;
 
 -- Step 5で作成したCortex Agent
-DROP AGENT IF EXISTS SNOWFLAKE_INTELLIGENCE.AGENTS.SALES_AI;
+DROP AGENT IF EXISTS DASH_DB_SI.RETAIL.SALES_AI;
 
 -- Step 4で作成したCortex Search サービス
 DROP CORTEX SEARCH SERVICE IF EXISTS DASH_DB_SI.RETAIL.SUPPORT_CASES;
@@ -355,7 +350,6 @@ DROP SNOWFLAKE INTELLIGENCE IF EXISTS SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
 
 -- Step 1で作成したリソース
 DROP DATABASE IF EXISTS DASH_DB_SI;
-DROP DATABASE IF EXISTS SNOWFLAKE_INTELLIGENCE;
 DROP WAREHOUSE IF EXISTS DASH_WH_SI;
 
 -- Git連携
