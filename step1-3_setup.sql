@@ -145,7 +145,7 @@ GRANT MODIFY ON SNOWFLAKE INTELLIGENCE SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT TO 
 -- ディメンションを定義します。
 -- ============================================
 
-CREATE OR REPLACE SEMANTIC VIEW DASH_DB_SI.RETAIL.Sales_And_Marketing_SV
+CREATE OR REPLACE SEMANTIC VIEW SI_DB.RETAIL.Sales_And_Marketing_SV
 
 -- ----------------------------------------
 -- TABLES: 使用するテーブルを定義
@@ -153,21 +153,21 @@ CREATE OR REPLACE SEMANTIC VIEW DASH_DB_SI.RETAIL.Sales_And_Marketing_SV
 -- 日本語シノニム（別名）を設定します
 -- ----------------------------------------
 TABLES (
-    MARKETING_CAMPAIGN_METRICS AS DASH_DB_SI.RETAIL.MARKETING_CAMPAIGN_METRICS
+    MARKETING_CAMPAIGN_METRICS AS SI_DB.RETAIL.MARKETING_CAMPAIGN_METRICS
         PRIMARY KEY (CATEGORY)
         WITH SYNONYMS ('マーケティングキャンペーン', '広告キャンペーン', '宣伝活動', 'キャンペーン')
         COMMENT = 'マーケティングキャンペーンのメトリクス',
     
-    PRODUCTS AS DASH_DB_SI.RETAIL.PRODUCTS
+    PRODUCTS AS SI_DB.RETAIL.PRODUCTS
         PRIMARY KEY (PRODUCT_ID)
         WITH SYNONYMS ('商品カタログ', '製品一覧', '商品', '製品', 'アイテム')
         COMMENT = '製品マスタデータ',
     
-    SALES AS DASH_DB_SI.RETAIL.SALES
+    SALES AS SI_DB.RETAIL.SALES
         WITH SYNONYMS ('売上取引', '販売', '取引', '注文', 'オーダー', '売上データ')
         COMMENT = '売上取引データ',
     
-    SOCIAL_MEDIA AS DASH_DB_SI.RETAIL.SOCIAL_MEDIA
+    SOCIAL_MEDIA AS SI_DB.RETAIL.SOCIAL_MEDIA
         WITH SYNONYMS ('ソーシャルメディア', 'SNS', 'ソーシャル', 'SNSデータ', 'ソーシャル指標')
         COMMENT = 'ソーシャルメディアデータ'
 )
@@ -306,7 +306,7 @@ COMMENT = 'セールスとマーケティングデータのセマンティック
 -- 
 -- 【操作手順】
 -- 1. Snowsight → AIとML → Cortex分析 
---    → データベース: DASH_DB_SI、スキーマ: RETAIL
+--    → データベース: SI_DB、スキーマ: RETAIL
 --    → Sales_And_Marketing_SV を選択
 -- 2. 「Playground」タブで質問を試してみましょう
 --    例: 「製品カテゴリ別の売上を教えて」
@@ -337,20 +337,20 @@ select 'Congratulations! Step 1-3 setup has completed successfully!' as status;
 USE ROLE ACCOUNTADMIN;
 
 -- Step 5で作成したCortex Agent
-DROP AGENT IF EXISTS DASH_DB_SI.RETAIL.SALES_AI;
+DROP AGENT IF EXISTS SI_DB.RETAIL.SALES_AI;
 
 -- Step 4で作成したCortex Search サービス
-DROP CORTEX SEARCH SERVICE IF EXISTS DASH_DB_SI.RETAIL.SUPPORT_CASES;
+DROP CORTEX SEARCH SERVICE IF EXISTS SI_DB.RETAIL.SUPPORT_CASES;
 
 -- Step 3で作成したセマンティックビュー
-DROP SEMANTIC VIEW IF EXISTS DASH_DB_SI.RETAIL.SALES_AND_MARKETING_SV;
+DROP SEMANTIC VIEW IF EXISTS SI_DB.RETAIL.SALES_AND_MARKETING_SV;
 
 -- Step 2で作成したSnowflake Intelligence オブジェクト
 DROP SNOWFLAKE INTELLIGENCE IF EXISTS SNOWFLAKE_INTELLIGENCE_OBJECT_DEFAULT;
 
 -- Step 1で作成したリソース
-DROP DATABASE IF EXISTS DASH_DB_SI;
-DROP WAREHOUSE IF EXISTS DASH_WH_SI;
+DROP DATABASE IF EXISTS SI_DB;
+DROP WAREHOUSE IF EXISTS SI_WH;
 
 -- Git連携
 DROP API INTEGRATION IF EXISTS GIT_API_INTEGRATION;

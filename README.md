@@ -45,9 +45,9 @@
 `step1-3_setup.sql` を Snowsight で実行し、以下のリソースを作成します：
 
 - **ロール**: `SNOWFLAKE_INTELLIGENCE_ADMIN`
-- **データベース**: `DASH_DB_SI`
+- **データベース**: `SI_DB`
 - **スキーマ**: `RETAIL`
-- **ウェアハウス**: `DASH_WH_SI`（Large）
+- **ウェアハウス**: `SI_WH`（Large）
 - **5つのテーブル**:
   - `MARKETING_CAMPAIGN_METRICS` - マーケティングキャンペーン指標
   - `PRODUCTS` - 製品マスタ
@@ -76,7 +76,7 @@ Snowsight の **AIとML > Cortex検索** から新しいサービスを作成し
 | 設定項目 | 値 |
 |----------|-----|
 | サービス名 | `Support_Cases` |
-| 検索対象テーブル | `DASH_DB_SI.RETAIL.SUPPORT_CASES` |
+| 検索対象テーブル | `SI_DB.RETAIL.SUPPORT_CASES` |
 | 検索列 | `TRANSCRIPT` |
 | 属性列 | `TITLE`, `PRODUCT`, `DATE` |
 | 埋め込みモデル | `snowflake-arctic-embed-l-v2.0` |
