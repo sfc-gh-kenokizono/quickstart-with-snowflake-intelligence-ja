@@ -17,16 +17,16 @@ grant create snowflake intelligence on account to role snowflake_intelligence_ad
 set current_user = (select current_user());   
 grant role snowflake_intelligence_admin to user identifier($current_user);
 alter user set default_role = snowflake_intelligence_admin;
-alter user set default_warehouse = dash_wh_si;
+alter user set default_warehouse = si_wh;
 
 use role snowflake_intelligence_admin;
-create or replace database dash_db_si;
+create or replace database si_db;
 create or replace schema retail;
-create or replace warehouse dash_wh_si with warehouse_size='large';
+create or replace warehouse si_wh with warehouse_size='large';
 
-use database dash_db_si;
+use database si_db;
 use schema retail;
-use warehouse dash_wh_si;
+use warehouse si_wh;
 
 -- ファイルフォーマットの作成
 create or replace file format si_csvformat
@@ -49,13 +49,13 @@ CREATE OR REPLACE GIT REPOSITORY GIT_INTEGRATION_FOR_HANDSON
 ls @GIT_INTEGRATION_FOR_HANDSON/branches/main;
 
 -- ステージの作成
-CREATE OR REPLACE STAGE dash_db_si.retail.FILE
+CREATE OR REPLACE STAGE si_db.retail.SI_STAGE
 encryption = (type = 'snowflake_sse') 
 DIRECTORY = (ENABLE = TRUE)
 file_format = si_csvformat;
 
 -- Gitからファイルを持ってくる
-COPY FILES INTO @dash_db_si.retail.FILE
+COPY FILES INTO @si_db.retail.SI_STAGE
 FROM @GIT_INTEGRATION_FOR_HANDSON/branches/main/data/ PATTERN ='.*\\.csv$';
 
 -- ============================================
@@ -72,7 +72,7 @@ create or replace table marketing_campaign_metrics (
   clicks number(38,0)
 );
 copy into marketing_campaign_metrics  
-  from @dash_db_si.retail.FILE/marketing_campaign_metrics.csv;
+  from @si_db.retail.SI_STAGE/marketing_campaign_metrics.csv;
 
 -- [2/5] PRODUCTS: 製品マスタ
 -- 商品ID、商品名、カテゴリの製品情報
@@ -82,7 +82,7 @@ create or replace table products (
   category varchar(16777216)
 );
 copy into products  
-  from @dash_db_si.retail.FILE/products.csv;
+  from @si_db.retail.SI_STAGE/products.csv;
 
 -- [3/5] SALES: 売上データ
 -- 日付、地域、商品ごとの販売数量と売上金額
@@ -94,7 +94,7 @@ create or replace table sales (
   sales_amount number(38,2)
 );
 copy into sales  
-  from @dash_db_si.retail.FILE/sales.csv;
+  from @si_db.retail.SI_STAGE/sales.csv;
 
 -- [4/5] SOCIAL_MEDIA: ソーシャルメディア指標
 -- プラットフォーム別、インフルエンサー別のメンション数
@@ -106,7 +106,7 @@ create or replace table social_media (
   mentions number(38,0)
 );
 copy into social_media  
-  from @dash_db_si.retail.FILE/social_media_mentions.csv;
+  from @si_db.retail.SI_STAGE/social_media_mentions.csv;
 
 -- [5/5] SUPPORT_CASES: カスタマーサポートケース（日本語）
 -- お客様との会話トランスクリプト（非構造化データ）
@@ -119,7 +119,7 @@ create or replace table support_cases (
   date date
 );
 copy into support_cases  
-  from @dash_db_si.retail.FILE/support_case_ja.csv;
+  from @si_db.retail.SI_STAGE/support_case_ja.csv;
 
 -- クロスリージョン設定
 ALTER ACCOUNT SET CORTEX_ENABLED_CROSS_REGION = 'AWS_US';
