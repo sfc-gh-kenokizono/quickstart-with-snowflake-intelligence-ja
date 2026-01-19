@@ -320,6 +320,115 @@ COMMENT = 'セールスとマーケティングデータのセマンティック
 
 
 -- ============================================
+-- 補足: AI_GENERATE_TABLE_DESCで日本語コメントを自動設定
+-- ============================================
+-- AI_GENERATE_TABLE_DESC で説明を自動生成し、
+-- AI_TRANSLATE で日本語に翻訳してコメントを設定します。
+-- 
+-- 【使い方】
+-- セマンティックビューをGUIで作成する前に実行すると、
+-- テーブル追加時に日本語コメントが自動反映されます。
+-- ============================================
+
+-- 日本語翻訳付きコメント自動生成プロシージャ
+CREATE OR REPLACE PROCEDURE DESCRIBE_TABLES_SET_COMMENT_JA (
+  database_name STRING, 
+  schema_name STRING,
+  set_table_comment BOOLEAN,
+  set_column_comment BOOLEAN
+)
+  RETURNS STRING
+  LANGUAGE PYTHON
+  RUNTIME_VERSION = '3.10'
+  PACKAGES=('snowflake-snowpark-python','joblib')
+  HANDLER = 'main'
+AS
+$$
+import json
+from joblib import Parallel, delayed
+import multiprocessing
+
+def translate_to_japanese(session, text):
+    """AI_TRANSLATEを使って日本語に翻訳"""
+    try:
+        escaped_text = text.replace("'", "''")
+        result = session.sql(f"SELECT SNOWFLAKE.CORTEX.TRANSLATE('{escaped_text}', 'en', 'ja')").collect()
+        return result[0][0]
+    except Exception as e:
+        return text  # 翻訳失敗時は元のテキストを返す
+
+def generate_descr(session, database_name, schema_name, table, set_table_comment, set_column_comment):
+    table_name = table['TABLE_NAME']
+    
+    # AI_GENERATE_TABLE_DESCを呼び出し
+    async_job = session.sql(f"CALL AI_GENERATE_TABLE_DESC('{database_name}.{schema_name}.{table_name}', {{'describe_columns': true, 'use_table_data': true}})").collect_nowait()
+    result = async_job.result()
+    output = json.loads(result[0][0])
+    columns_ret = output['COLUMNS']
+    table_ret = output['TABLE'][0]
+
+    table_description = table_ret['description']
+    table_name = table_ret['name']
+    database_name = table_ret['database_name']
+    schema_name = table_ret['schema_name']
+
+    if set_table_comment:
+        # 日本語に翻訳
+        table_description_ja = translate_to_japanese(session, table_description)
+        table_description_ja = table_description_ja.replace("'", "''")
+        session.sql(f"""ALTER TABLE {database_name}.{schema_name}.{table_name} SET COMMENT = '{table_description_ja}'""").collect()
+
+    for column in columns_ret:
+        column_description = column['description']
+        column_name = column['name']
+        if not column_name.isupper():
+            column_name = '"' + column_name + '"'
+
+        if set_column_comment:
+            # 日本語に翻訳
+            column_description_ja = translate_to_japanese(session, column_description)
+            column_description_ja = column_description_ja.replace("'", "''")
+            session.sql(f"""ALTER TABLE {database_name}.{schema_name}.{table_name} MODIFY COLUMN {column_name} COMMENT '{column_description_ja}'""").collect()
+
+    return 'Success'
+
+def main(session, database_name, schema_name, set_table_comment, set_column_comment):
+    schema_name = schema_name.upper()
+    database_name = database_name.upper()
+    
+    tablenames = session.sql(f"""
+        SELECT table_name
+        FROM {database_name}.information_schema.tables
+        WHERE table_schema = '{schema_name}'
+        AND table_type = 'BASE TABLE'
+    """).collect()
+    
+    try:
+        Parallel(n_jobs=multiprocessing.cpu_count(), backend='threading')(
+            delayed(generate_descr)(
+                session,
+                database_name,
+                schema_name,
+                table,
+                set_table_comment,
+                set_column_comment,
+            ) for table in tablenames
+        )
+        return 'Success'
+    except Exception as e:
+        return f'An error occurred: {str(e)}'
+$$;
+
+-- プロシージャを実行（テーブルと列の両方に日本語コメントを付与）
+-- 引数:
+--   database_name     : 対象データベース名
+--   schema_name       : 対象スキーマ名
+--   set_table_comment : テーブルコメントを設定するか（true/false）
+--   set_column_comment: 列コメントを設定するか（true/false）
+CALL DESCRIBE_TABLES_SET_COMMENT_JA('SI_DB', 'RETAIL', true, true);
+
+
+-- ============================================
 -- セットアップ完了
 -- ============================================
 select 'Congratulations! Step 1-3 setup has completed successfully!' as status;
