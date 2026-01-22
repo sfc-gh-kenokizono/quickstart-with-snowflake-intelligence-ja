@@ -154,7 +154,7 @@ CREATE OR REPLACE SEMANTIC VIEW SI_DB.RETAIL.Sales_And_Marketing_SV
 -- ----------------------------------------
 TABLES (
     MARKETING_CAMPAIGN_METRICS AS SI_DB.RETAIL.MARKETING_CAMPAIGN_METRICS
-        PRIMARY KEY (CATEGORY)
+        PRIMARY KEY (DATE, CATEGORY, CAMPAIGN_NAME)
         WITH SYNONYMS ('マーケティングキャンペーン', '広告キャンペーン', '宣伝活動', 'キャンペーン')
         COMMENT = 'マーケティングキャンペーンのメトリクス',
     
@@ -178,8 +178,8 @@ TABLES (
 -- AIが適切にテーブルを結合できます
 -- ----------------------------------------
 RELATIONSHIPS (
-    SALES_TO_PRODUCT AS SALES (PRODUCT_ID) REFERENCES PRODUCTS,
-    MARKETING_TO_SOCIAL AS SOCIAL_MEDIA (CATEGORY) REFERENCES MARKETING_CAMPAIGN_METRICS
+    SALES_TO_PRODUCT AS SALES (PRODUCT_ID) REFERENCES PRODUCTS
+    -- MARKETING_TO_SOCIAL を削除: CATEGORYのみでの結合は多対多となりデータ膨張を引き起こすため
 )
 
 -- ----------------------------------------
