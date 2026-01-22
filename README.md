@@ -114,16 +114,14 @@ Snowsight の **AIとML > エージェント** から新しいエージェント
 │ MARKETING_CAMPAIGN      │     │ PRODUCTS        │
 │ METRICS                 │     │                 │
 │ ─────────────────────── │     │ ─────────────── │
-│ DATE                    │     │ PRODUCT_ID (PK) │
+│ DATE (PK)               │     │ PRODUCT_ID (PK) │
 │ CATEGORY (PK)           │     │ PRODUCT_NAME    │
-│ CAMPAIGN_NAME           │     │ CATEGORY        │
+│ CAMPAIGN_NAME (PK)      │     │ CATEGORY        │
 │ IMPRESSIONS             │     └────────┬────────┘
 │ CLICKS                  │              │
-└───────────┬─────────────┘              │
-            │                            │
-            │ CATEGORY                   │ PRODUCT_ID
-            │                            │
-┌───────────▼─────────────┐     ┌────────▼────────┐
+└─────────────────────────┘              │
+                                         │ PRODUCT_ID
+┌─────────────────────────┐     ┌────────▼────────┐
 │ SOCIAL_MEDIA            │     │ SALES           │
 │ ─────────────────────── │     │ ─────────────── │
 │ DATE                    │     │ DATE            │
@@ -132,6 +130,9 @@ Snowsight の **AIとML > エージェント** から新しいエージェント
 │ INFLUENCER              │     │ UNITS_SOLD      │
 │ MENTIONS                │     │ SALES_AMOUNT    │
 └─────────────────────────┘     └─────────────────┘
+
+※ MARKETING_CAMPAIGN_METRICS と SOCIAL_MEDIA は直接結合しません
+  （CATEGORYのみでの結合は多対多となりデータ膨張を引き起こすため）
 
 ┌─────────────────────────────────────────────────┐
 │ SUPPORT_CASES (非構造化データ)                    │
